@@ -9,7 +9,8 @@ export async function linkGuardian(patientId: string, formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   if (!email) throw new Error("Cal indicar un email.");
 
-  const { error } = await supabase.rpc("link_guardian_by_email", {
+  // Mateix workaround que a mark_assignment_completed (veure comentari allà).
+  const { error } = await (supabase.rpc as any)("link_guardian_by_email", {
     p_patient_id: patientId,
     p_email: email,
   });

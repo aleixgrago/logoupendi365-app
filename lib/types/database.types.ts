@@ -203,6 +203,9 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["reports"]["Insert"]>;
       };
     };
+    Views: {
+      [_ in never]: never;
+    };
     Functions: {
       mark_assignment_completed: {
         Args: { assignment_id: string };
@@ -212,6 +215,12 @@ export interface Database {
         Args: { p_patient_id: string; p_email: string };
         Returns: void;
       };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }

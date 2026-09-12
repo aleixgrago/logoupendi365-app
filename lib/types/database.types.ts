@@ -34,6 +34,7 @@ export interface Database {
           consent_accepted_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Relationships: [];
       };
       patients: {
         Row: {
@@ -61,11 +62,13 @@ export interface Database {
           status?: PatientStatus;
         };
         Update: Partial<Database["public"]["Tables"]["patients"]["Insert"]>;
+        Relationships: [];
       };
       patient_guardians: {
         Row: { patient_id: string; parent_id: string };
         Insert: { patient_id: string; parent_id: string };
         Update: Partial<{ patient_id: string; parent_id: string }>;
+        Relationships: [];
       };
       goals: {
         Row: {
@@ -92,6 +95,7 @@ export interface Database {
           source?: "manual" | "ai_suggested";
         };
         Update: Partial<Database["public"]["Tables"]["goals"]["Insert"]>;
+        Relationships: [];
       };
       exercises: {
         Row: {
@@ -118,6 +122,7 @@ export interface Database {
           source?: "manual" | "ai_suggested";
         };
         Update: Partial<Database["public"]["Tables"]["exercises"]["Insert"]>;
+        Relationships: [];
       };
       exercise_assignments: {
         Row: {
@@ -141,6 +146,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["exercise_assignments"]["Insert"]
         >;
+        Relationships: [];
       };
       documents: {
         Row: {
@@ -161,6 +167,7 @@ export interface Database {
           mime_type: string;
         };
         Update: Partial<Database["public"]["Tables"]["documents"]["Insert"]>;
+        Relationships: [];
       };
       history_events: {
         Row: {
@@ -181,6 +188,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["history_events"]["Insert"]
         >;
+        Relationships: [];
       };
       reports: {
         Row: {
@@ -201,6 +209,7 @@ export interface Database {
           status?: ReportStatus;
         };
         Update: Partial<Database["public"]["Tables"]["reports"]["Insert"]>;
+        Relationships: [];
       };
     };
     Views: {

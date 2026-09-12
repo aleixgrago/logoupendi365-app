@@ -1,0 +1,132 @@
+{
+  "common": {
+    "appName": "Logoupendi365",
+    "save": "Desar",
+    "cancel": "Cancel·lar",
+    "loading": "Carregant...",
+    "language": "Idioma"
+  },
+  "languageNames": {
+    "ca": "Català",
+    "es": "Castellà"
+  },
+  "auth": {
+    "login": {
+      "title": "Benvingut/da de nou",
+      "subtitle": "Inicia sessió a Logoupendi365",
+      "email": "Email",
+      "password": "Contrasenya",
+      "submit": "Entrar",
+      "submitting": "Entrant...",
+      "error": "Email o contrasenya incorrectes.",
+      "noAccount": "Encara no tens compte?",
+      "registerLink": "Registra't"
+    },
+    "register": {
+      "title": "Crea el teu compte",
+      "subtitle": "Fase de beta privada — Logoupendi365",
+      "fullName": "Nom complet",
+      "roleQuestion": "Ets logopeda o tutor/a?",
+      "roleTherapist": "Logopeda",
+      "roleParent": "Pare/Tutor",
+      "email": "Email",
+      "password": "Contrasenya",
+      "consent": "Accepto el tractament de les meves dades per a l'ús de la plataforma. Durant aquesta fase de beta, no s'han d'introduir dades reals de pacients: només perfils de prova.",
+      "consentRequired": "Cal acceptar el tractament de dades per continuar.",
+      "submit": "Crear compte",
+      "submitting": "Creant compte..."
+    }
+  },
+  "nav": {
+    "dashboard": "Panell",
+    "patients": "Pacients",
+    "exercises": "Exercicis",
+    "myChildren": "Els meus infants"
+  },
+  "dashboard": {
+    "greeting": "Hola, {name}",
+    "activePatients": "Pacients actius",
+    "assignmentsWeek": "Exercicis assignats (7 dies)",
+    "staleCount": "Sense activitat (14 dies)"
+  },
+  "patients": {
+    "title": "Pacients",
+    "newPatient": "+ Nou pacient",
+    "searchPlaceholder": "Cerca per nom o cognoms...",
+    "filterAll": "Tots",
+    "filterActive": "Actius",
+    "filterInactive": "Inactius",
+    "filterSubmit": "Filtrar",
+    "colName": "Nom",
+    "colBirthDate": "Data naixement",
+    "colStatus": "Estat",
+    "statusActive": "Actiu",
+    "statusInactive": "Inactiu",
+    "empty": "Encara no hi ha pacients. Crea'n un per començar."
+  },
+  "marketing": {
+    "metaTitle": "Logoupendi365 — Seguiment logopèdic per a professionals i famílies",
+    "metaDescription": "Plataforma per a logopedes i famílies: objectius terapèutics, exercicis i progrés dels pacients en un sol lloc, en català i castellà.",
+    "nav": {
+      "howItWorks": "Com funciona",
+      "forWhom": "Per a qui és",
+      "login": "Iniciar sessió",
+      "cta": "Provar la beta"
+    },
+    "hero": {
+      "eyebrow": "Beta privada per a logopedes",
+      "title": "El seguiment logopèdic que estalvia temps al professional i implica les famílies",
+      "subtitle": "Objectius, exercicis i progrés dels teus pacients en un sol lloc — sense fulls de paper ni grups de WhatsApp dispersos.",
+      "ctaTherapist": "Sóc logopeda",
+      "ctaParent": "Sóc pare/tutor"
+    },
+    "howItWorks": {
+      "title": "Com funciona",
+      "steps": [
+        {
+          "title": "El logopeda defineix objectius i exercicis",
+          "description": "Cada pacient té els seus objectius terapèutics i una biblioteca d'exercicis assignats, en català o castellà segons calgui."
+        },
+        {
+          "title": "La família treballa des de casa",
+          "description": "Els pares veuen exactament què han de fer amb el seu fill/a, i marquen cada exercici com a fet."
+        },
+        {
+          "title": "El progrés queda registrat",
+          "description": "Un historial automàtic i el percentatge d'assoliment de cada objectiu permeten veure l'evolució real, sense haver-ho d'apuntar a mà."
+        }
+      ]
+    },
+    "audiences": {
+      "title": "Per a qui és",
+      "therapistTitle": "Per a logopedes",
+      "therapistItems": [
+        "Estalvia temps administratiu en cada sessió",
+        "Detecta pacients que han deixat de fer exercicis abans que sigui tard",
+        "Tota la informació del pacient organitzada en un sol lloc"
+      ],
+      "parentTitle": "Per a famílies",
+      "parentItems": [
+        "Saps exactament què practicar amb el teu fill/a cada setmana",
+        "Veus el progrés real, no només allò que et diuen de paraula",
+        "Comunicació directa amb el logopeda, sense papers que es perden"
+      ]
+    },
+    "preview": {
+      "title": "Un exemple de com es veu",
+      "caption": "Vista del panell del logopeda: pacients actius, exercicis assignats i alertes d'inactivitat."
+    },
+    "pricing": {
+      "title": "Preus",
+      "body": "Estem en fase de beta privada amb un grup reduït de logopedes. El model de preus es definirà un cop validat amb els primers professionals — si vols ser-hi, demana accés.",
+      "cta": "Sol·licita accés"
+    },
+    "footer": {
+      "tagline": "Plataforma de seguiment logopèdic per a professionals i famílies.",
+      "privacy": "Privacitat",
+      "terms": "Termes",
+      "contact": "Contacte",
+      "rights": "Tots els drets reservats."
+    }
+  }
+}

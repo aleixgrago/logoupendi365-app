@@ -1,0 +1,132 @@
+{
+  "common": {
+    "appName": "Logoupendi365",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "loading": "Cargando...",
+    "language": "Idioma"
+  },
+  "languageNames": {
+    "ca": "Catalán",
+    "es": "Castellano"
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido/a de nuevo",
+      "subtitle": "Inicia sesión en Logoupendi365",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Entrar",
+      "submitting": "Entrando...",
+      "error": "Email o contraseña incorrectos.",
+      "noAccount": "¿Aún no tienes cuenta?",
+      "registerLink": "Regístrate"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Fase de beta privada — Logoupendi365",
+      "fullName": "Nombre completo",
+      "roleQuestion": "¿Eres logopeda o tutor/a?",
+      "roleTherapist": "Logopeda",
+      "roleParent": "Padre/Tutor",
+      "email": "Email",
+      "password": "Contraseña",
+      "consent": "Acepto el tratamiento de mis datos para el uso de la plataforma. Durante esta fase de beta, no se deben introducir datos reales de pacientes: solo perfiles de prueba.",
+      "consentRequired": "Debes aceptar el tratamiento de datos para continuar.",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta..."
+    }
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "patients": "Pacientes",
+    "exercises": "Ejercicios",
+    "myChildren": "Mis hijos/as"
+  },
+  "dashboard": {
+    "greeting": "Hola, {name}",
+    "activePatients": "Pacientes activos",
+    "assignmentsWeek": "Ejercicios asignados (7 días)",
+    "staleCount": "Sin actividad (14 días)"
+  },
+  "patients": {
+    "title": "Pacientes",
+    "newPatient": "+ Nuevo paciente",
+    "searchPlaceholder": "Busca por nombre o apellidos...",
+    "filterAll": "Todos",
+    "filterActive": "Activos",
+    "filterInactive": "Inactivos",
+    "filterSubmit": "Filtrar",
+    "colName": "Nombre",
+    "colBirthDate": "Fecha nacimiento",
+    "colStatus": "Estado",
+    "statusActive": "Activo",
+    "statusInactive": "Inactivo",
+    "empty": "Todavía no hay pacientes. Crea uno para empezar."
+  },
+  "marketing": {
+    "metaTitle": "Logoupendi365 — Seguimiento logopédico para profesionales y familias",
+    "metaDescription": "Plataforma para logopedas y familias: objetivos terapéuticos, ejercicios y progreso de los pacientes en un solo lugar, en catalán y castellano.",
+    "nav": {
+      "howItWorks": "Cómo funciona",
+      "forWhom": "Para quién es",
+      "login": "Iniciar sesión",
+      "cta": "Probar la beta"
+    },
+    "hero": {
+      "eyebrow": "Beta privada para logopedas",
+      "title": "El seguimiento logopédico que ahorra tiempo al profesional e implica a las familias",
+      "subtitle": "Objetivos, ejercicios y progreso de tus pacientes en un solo lugar — sin hojas de papel ni grupos de WhatsApp dispersos.",
+      "ctaTherapist": "Soy logopeda",
+      "ctaParent": "Soy padre/tutor"
+    },
+    "howItWorks": {
+      "title": "Cómo funciona",
+      "steps": [
+        {
+          "title": "El logopeda define objetivos y ejercicios",
+          "description": "Cada paciente tiene sus objetivos terapéuticos y una biblioteca de ejercicios asignados, en catalán o castellano según convenga."
+        },
+        {
+          "title": "La familia trabaja desde casa",
+          "description": "Los padres ven exactamente qué deben hacer con su hijo/a, y marcan cada ejercicio como hecho."
+        },
+        {
+          "title": "El progreso queda registrado",
+          "description": "Un historial automático y el porcentaje de logro de cada objetivo permiten ver la evolución real, sin tener que apuntarlo a mano."
+        }
+      ]
+    },
+    "audiences": {
+      "title": "Para quién es",
+      "therapistTitle": "Para logopedas",
+      "therapistItems": [
+        "Ahorra tiempo administrativo en cada sesión",
+        "Detecta pacientes que han dejado de hacer ejercicios antes de que sea tarde",
+        "Toda la información del paciente organizada en un solo lugar"
+      ],
+      "parentTitle": "Para familias",
+      "parentItems": [
+        "Sabes exactamente qué practicar con tu hijo/a cada semana",
+        "Ves el progreso real, no solo lo que te cuentan de palabra",
+        "Comunicación directa con el logopeda, sin papeles que se pierden"
+      ]
+    },
+    "preview": {
+      "title": "Un ejemplo de cómo se ve",
+      "caption": "Vista del panel del logopeda: pacientes activos, ejercicios asignados y alertas de inactividad."
+    },
+    "pricing": {
+      "title": "Precios",
+      "body": "Estamos en fase de beta privada con un grupo reducido de logopedas. El modelo de precios se definirá una vez validado con los primeros profesionales — si quieres participar, solicita acceso.",
+      "cta": "Solicita acceso"
+    },
+    "footer": {
+      "tagline": "Plataforma de seguimiento logopédico para profesionales y familias.",
+      "privacy": "Privacidad",
+      "terms": "Términos",
+      "contact": "Contacto",
+      "rights": "Todos los derechos reservados."
+    }
+  }
+}

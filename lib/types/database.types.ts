@@ -203,5 +203,15 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["reports"]["Insert"]>;
       };
     };
+    Functions: {
+      mark_assignment_completed: {
+        Args: { assignment_id: string };
+        Returns: void;
+      };
+      link_guardian_by_email: {
+        Args: { p_patient_id: string; p_email: string };
+        Returns: void;
+      };
+    };
   };
 }

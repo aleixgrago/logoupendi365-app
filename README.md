@@ -14,7 +14,6 @@ pujar a Supabase Pro + Vercel Pro, aquesta restricció desapareix.
 ## Setup
 
 1. Crea un projecte a [supabase.com](https://supabase.com) (pla Free).
-Supabase pwd: qNWQpgTgB0K2CJTH
 2. A l'SQL Editor del projecte, executa en aquest ordre exacte (cadascuna
    depèn de l'anterior):
    - `supabase/migrations/0001_init.sql` (contingut del `schema.sql` entregat)

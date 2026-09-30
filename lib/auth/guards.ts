@@ -1,8 +1,28 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/lib/types/database.types";
 
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+// NOTA: es fa servir un tipus manual (no derivat de Database) perquè el
+// client de Supabase ja no aplica el genèric <Database> (veure
+// lib/supabase/server.ts) — aquesta anotació és només per a les funcions
+// d'aquest fitxer, no ve enforçada per la consulta en si.
+type Role = "therapist" | "parent" | "center_admin";
+
+interface Profile {
+  id: string;
+  role: Role;
+  full_name: string;
+  phone: string | null;
+  locale: "ca" | "es";
+  center_id: string | null;
+  consent_accepted_at: string | null;
+  created_at: string;
+}
+
+const ROLE_HOME: Record<Role, string> = {
+  therapist: "/dashboard",
+  parent: "/children",
+  center_admin: "/center",
+};
 
 /**
  * Recupera l'usuari autenticat i el seu perfil (amb rol). Si no hi ha sessió,
@@ -42,12 +62,15 @@ export async function requireUser(): Promise<{
  * és una xarxa de seguretat addicional: la garantia real segueix sent RLS a
  * la base de dades, no aquesta funció.
  */
-export async function requireRole(role: Profile["role"]) {
+export async function requireRole(role: Role) {
   const { supabase, profile } = await requireUser();
 
   if (profile.role !== role) {
-    redirect(profile.role === "therapist" ? "/dashboard" : "/children");
+    redirect(ROLE_HOME[profile.role]);
   }
 
   return { supabase, profile };
 }
+
+export { ROLE_HOME };
+export type { Profile, Role };

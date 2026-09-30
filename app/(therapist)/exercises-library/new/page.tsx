@@ -5,7 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default async function NewExercisePage() {
-  await requireRole("therapist");
+  const { supabase } = await requireRole("therapist");
+
+  const { data: categories } = await supabase
+    .from("disorder_categories")
+    .select("id, name_ca")
+    .order("name_ca", { ascending: true });
 
   return (
     <div className="mx-auto max-w-lg">
@@ -28,6 +33,25 @@ export default async function NewExercisePage() {
               className="w-full rounded-xl border border-ink-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
             />
           </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-ink-700">
+              Categoria / trastorn treballat
+            </label>
+            <select
+              name="disorder_category_id"
+              defaultValue=""
+              className="w-full rounded-xl border border-ink-100 bg-white px-3 py-2 text-sm"
+            >
+              <option value="">Sense categoria</option>
+              {(categories ?? []).map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name_ca}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-ink-700">
@@ -45,6 +69,38 @@ export default async function NewExercisePage() {
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-ink-700">
+                Edat mínima
+              </label>
+              <Input type="number" name="min_age" min={0} max={18} />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-ink-700">
+                Edat màxima
+              </label>
+              <Input type="number" name="max_age" min={0} max={18} />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-ink-700">
+              Dificultat
+            </label>
+            <select
+              name="difficulty"
+              defaultValue=""
+              className="w-full rounded-xl border border-ink-100 bg-white px-3 py-2 text-sm"
+            >
+              <option value="">Sense especificar</option>
+              <option value="easy">Fàcil</option>
+              <option value="medium">Mitjana</option>
+              <option value="hard">Difícil</option>
+            </select>
+          </div>
+
           <div>
             <label className="mb-1 block text-sm font-medium text-ink-700">
               Idioma de l&apos;exercici
@@ -57,12 +113,8 @@ export default async function NewExercisePage() {
               <option value="ca">Català</option>
               <option value="es">Castellà</option>
             </select>
-            <p className="mt-1 text-xs text-ink-400">
-              La fonètica/fonologia treballada depèn de l&apos;idioma: crea
-              versions separades si vols oferir el mateix exercici en
-              català i castellà.
-            </p>
           </div>
+
           <Button type="submit" className="w-full">
             Crear exercici
           </Button>

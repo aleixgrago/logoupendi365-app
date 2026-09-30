@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/auth/guards";
+import { requireUser, ROLE_HOME } from "@/lib/auth/guards";
 
 /**
  * Punt d'entrada de l'aplicació autenticada. Abans vivia a l'arrel ("/"),
@@ -8,5 +8,5 @@ import { requireUser } from "@/lib/auth/guards";
  */
 export default async function AppEntryPage() {
   const { profile } = await requireUser();
-  redirect(profile.role === "therapist" ? "/dashboard" : "/children");
+  redirect(ROLE_HOME[profile.role]);
 }

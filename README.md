@@ -23,6 +23,12 @@ pujar a Supabase Pro + Vercel Pro, aquesta restricció desapareix.
    - `supabase/migrations/0005_languages.sql`
    - `supabase/migrations/0006_future_prep.sql`
    - `supabase/migrations/0007_profile_locale_trigger.sql`
+   - `supabase/migrations/0008_fix_rls_recursion.sql`
+   - `supabase/migrations/0009_exercise_categories.sql`
+   - `supabase/migrations/0010_seed_exercises.sql` (fitxer llarg, 66 exercicis)
+   - `supabase/migrations/0011_center_role.sql`
+   - `supabase/migrations/0012_centers.sql`
+   - `supabase/migrations/0013_center_signup_trigger.sql`
 3. Copia `.env.example` a `.env.local` i emplena `NEXT_PUBLIC_SUPABASE_URL` i
    `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Project Settings → API).
 4. Instal·la dependències i arrenca:
@@ -163,6 +169,57 @@ tinguis l'app desplegada, substitueix-lo per una captura autèntica.
 Un cop tinguis domini propi, actualitza `NEXT_PUBLIC_SITE_URL` a l'entorn
 de Vercel — és el valor que fa servir tota la generació de metadades,
 sitemap i canonical URLs.
+
+## Biblioteca d'exercicis clínica i filtres (nou en aquest increment)
+
+- **11 categories de trastorn** (taula `disorder_categories`, taxonomia de
+  referència compartida) cobrint les 9 famílies clíniques habituals:
+  llenguatge oral, parla, fluència, veu, motricitat orofacial,
+  lectoescriptura, comunicació social, trastorns associats i estimulació
+  primerenca.
+- **66 exercicis inicials** (6 per categoria) amb dificultat, rang d'edat
+  orientatiu, durada i freqüència. Són exercicis **compartits**
+  (`therapist_id` null): els veu tothom, però ningú els pot editar ni
+  esborrar des de l'app — són un punt de partida, no un protocol validat.
+- **Important**: aquesta biblioteca està escrita a partir de tècniques
+  àmpliament conegudes en logopèdia, **no és un protocol clínic validat
+  per cap professional col·legiat concret**. Cada logopeda ha de
+  revisar-la, adaptar-la o descartar-la segons el seu propi criteri
+  clínic abans d'assignar cap exercici a un pacient real.
+- Filtres a `/exercises-library`: categoria, dificultat, edat del nen i
+  idioma, amb agrupació visual per categoria.
+
+## Multi-centre (nou en aquest increment)
+
+Tercer rol: **admin de centre** (`center_admin`), pensat per a clíniques
+amb diversos logopedes, mantenint el model actual (terapeuta individual)
+intacte per als qui no en necessiten cap:
+
+- **Cada terapeuta pertany sempre a un centre** (`profiles.center_id`).
+  Un logopeda que es registra sense codi d'invitació obté un centre propi
+  de forma transparent — així el model d'aïllament és idèntic per a
+  tothom, sense casos especials de "terapeuta sense centre".
+- **Codi d'invitació**, no comptes creats manualment per l'admin: en
+  registrar-se com a "Admin de centre", es crea un centre nou amb un codi
+  aleatori de 8 caràcters; els logopedes s'hi uneixen introduint aquest
+  codi al seu propi registre (camp opcional "Codi del centre"). S'ha
+  descartat la creació manual de comptes perquè requeriria exposar la
+  `service_role` key de Supabase en un Route Handler — més risc de
+  seguretat del que aporta valor en aquesta fase.
+- **Aïllament de dades**: tot pacient nou queda vinculat automàticament al
+  centre del terapeuta que el crea (`patients.center_id`). L'admin de
+  centre veu (i pot gestionar) tots els pacients i tots els perfils de
+  logopeda del seu centre — mai dels d'un altre centre — via RLS amb
+  funcions `SECURITY DEFINER` (`my_center_id()`, `is_center_admin()`),
+  seguint el mateix patró que ja vam fer servir per arreglar el bug de
+  recursió infinita.
+- Panell a `/center`: mostra el codi d'invitació i llista logopedes i
+  pacients del centre.
+
+**Deliberadament fora d'abast d'aquest increment** (properes iteracions,
+si calen): l'admin encara no pot reassignar pacients entre logopedes, ni
+veure'n el detall clínic (objectius, exercicis, documents) — només el
+llistat bàsic. Tampoc hi ha manera de donar de baixa un membre del centre.
 
 ## Abans de sortir de la fase de beta (pujar a producció real)
 

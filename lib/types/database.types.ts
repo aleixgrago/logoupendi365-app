@@ -6,7 +6,7 @@
 // … i substitueix aquest fitxer sencer pel resultat. No el mantinguis a mà
 // un cop tinguis el projecte real, per evitar que es desincronitzi de l'esquema.
 
-export type UserRole = "therapist" | "parent";
+export type UserRole = "therapist" | "parent" | "center_admin";
 export type PatientStatus = "active" | "inactive";
 export type GoalStatus = "active" | "achieved" | "paused";
 export type AssignmentStatus = "pending" | "in_progress" | "completed";
@@ -22,6 +22,7 @@ export interface Database {
           full_name: string;
           phone: string | null;
           locale: "ca" | "es";
+          center_id: string | null;
           consent_accepted_at: string | null;
           created_at: string;
         };
@@ -31,6 +32,7 @@ export interface Database {
           full_name: string;
           phone?: string | null;
           locale?: "ca" | "es";
+          center_id?: string | null;
           consent_accepted_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
@@ -47,6 +49,7 @@ export interface Database {
           notes: string | null;
           preferred_language: "ca" | "es" | null;
           status: PatientStatus;
+          center_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -60,6 +63,7 @@ export interface Database {
           notes?: string | null;
           preferred_language?: "ca" | "es" | null;
           status?: PatientStatus;
+          center_id?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["patients"]["Insert"]>;
         Relationships: [];
@@ -100,7 +104,7 @@ export interface Database {
       exercises: {
         Row: {
           id: string;
-          therapist_id: string;
+          therapist_id: string | null;
           title: string;
           description: string | null;
           estimated_minutes: number | null;
@@ -108,11 +112,15 @@ export interface Database {
           pdf_path: string | null;
           language: "ca" | "es";
           source: "manual" | "ai_suggested";
+          disorder_category_id: string | null;
+          min_age: number | null;
+          max_age: number | null;
+          difficulty: "easy" | "medium" | "hard" | null;
           created_at: string;
         };
         Insert: {
           id?: string;
-          therapist_id: string;
+          therapist_id?: string | null;
           title: string;
           description?: string | null;
           estimated_minutes?: number | null;
@@ -120,6 +128,10 @@ export interface Database {
           pdf_path?: string | null;
           language?: "ca" | "es";
           source?: "manual" | "ai_suggested";
+          disorder_category_id?: string | null;
+          min_age?: number | null;
+          max_age?: number | null;
+          difficulty?: "easy" | "medium" | "hard" | null;
         };
         Update: Partial<Database["public"]["Tables"]["exercises"]["Insert"]>;
         Relationships: [];

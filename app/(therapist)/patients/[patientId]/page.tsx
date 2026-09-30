@@ -80,7 +80,7 @@ export default async function PatientDetailPage({
           let q = supabase
             .from("exercises")
             .select("id, title, language")
-            .eq("therapist_id", profile.id);
+            .or(`therapist_id.eq.${profile.id},therapist_id.is.null`);
           if (langFilter) q = q.eq("language", langFilter);
           return q;
         })()

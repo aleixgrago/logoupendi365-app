@@ -22,6 +22,10 @@ export async function createPatient(formData: FormData) {
     .from("patients")
     .insert({
       therapist_id: profile.id,
+      // Tot pacient nou queda vinculat al centre del terapeuta que el
+      // crea — és el que fa que l'admin del centre el vegi al seu
+      // panell (migració 0012_centers.sql).
+      center_id: profile.center_id,
       first_name,
       last_name,
       birth_date,

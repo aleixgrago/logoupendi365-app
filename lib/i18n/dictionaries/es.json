@@ -26,9 +26,15 @@
       "title": "Crea tu cuenta",
       "subtitle": "Fase de beta privada — Logoupendi365",
       "fullName": "Nombre completo",
-      "roleQuestion": "¿Eres logopeda o tutor/a?",
+      "roleQuestion": "¿Qué tipo de cuenta necesitas?",
       "roleTherapist": "Logopeda",
       "roleParent": "Padre/Tutor",
+      "roleCenterAdmin": "Admin de centro",
+      "centerName": "Nombre del centro",
+      "centerNamePlaceholder": "p. ej. Centro Logopédico Vallès",
+      "joinCodeLabel": "Código del centro (opcional)",
+      "joinCodePlaceholder": "Déjalo vacío si eres independiente",
+      "joinCodeHint": "Si trabajas en un centro, pide el código al admin. Si lo dejas vacío, tendrás tu propio espacio individual.",
       "email": "Email",
       "password": "Contraseña",
       "consent": "Acepto el tratamiento de mis datos para el uso de la plataforma. Durante esta fase de beta, no se deben introducir datos reales de pacientes: solo perfiles de prueba.",
@@ -41,7 +47,8 @@
     "dashboard": "Panel",
     "patients": "Pacientes",
     "exercises": "Ejercicios",
-    "myChildren": "Mis hijos/as"
+    "myChildren": "Mis hijos/as",
+    "center": "Centro"
   },
   "dashboard": {
     "greeting": "Hola, {name}",
@@ -63,6 +70,15 @@
     "statusActive": "Activo",
     "statusInactive": "Inactivo",
     "empty": "Todavía no hay pacientes. Crea uno para empezar."
+  },
+  "center": {
+    "title": "Mi centro",
+    "joinCodeLabel": "Código de invitación del centro",
+    "joinCodeHint": "Comparte este código con los logopedas que quieran unirse al centro durante su registro.",
+    "therapistsTitle": "Logopedas del centro",
+    "patientsTitle": "Pacientes del centro",
+    "noTherapists": "Todavía no hay ningún logopeda más en el centro.",
+    "noPatients": "Todavía no hay ningún paciente en el centro."
   },
   "marketing": {
     "metaTitle": "Logoupendi365 — Seguimiento logopédico para profesionales y familias",

@@ -12,7 +12,9 @@ export default async function RegisterPage({
   const cookieLocale = await getLocale();
   const locale = lang && isValidLocale(lang) ? lang : cookieLocale;
   const dict = getDictionary(locale);
-  const initialRole = role === "parent" ? "parent" : "therapist";
+
+  const initialRole =
+    role === "parent" || role === "center_admin" ? role : "therapist";
 
   return <RegisterForm dict={dict} locale={locale} initialRole={initialRole} />;
 }

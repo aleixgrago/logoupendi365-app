@@ -11,6 +11,7 @@ import {
   linkGuardian,
 } from "./actions";
 import { localeNames } from "@/lib/i18n/config";
+import { AssignExerciseForm } from "@/components/exercises/assign-exercise-form";
 
 const TABS = [
   { key: "summary", label: "Resum" },
@@ -79,7 +80,7 @@ export default async function PatientDetailPage({
       ? await (async () => {
           let q = supabase
             .from("exercises")
-            .select("id, title, language")
+            .select("id, title, language, disorder_category_id, disorder_categories(name_ca)")
             .or(`therapist_id.eq.${profile.id},therapist_id.is.null`);
           if (langFilter) q = q.eq("language", langFilter);
           return q;
@@ -369,20 +370,10 @@ export default async function PatientDetailPage({
                 . Crea&apos;n un abans d&apos;assignar.
               </p>
             ) : (
-              <form action={boundAssignExercise} className="flex gap-2">
-                <select
-                  name="exercise_id"
-                  required
-                  className="flex-1 rounded-xl border border-ink-100 bg-white px-3 py-2 text-sm"
-                >
-                  {(exerciseOptions ?? []).map((ex) => (
-                    <option key={ex.id} value={ex.id}>
-                      {ex.title} ({localeNames[ex.language as "ca" | "es"]})
-                    </option>
-                  ))}
-                </select>
-                <Button type="submit">Assignar</Button>
-              </form>
+              <AssignExerciseForm
+                exercises={exerciseOptions ?? []}
+                action={boundAssignExercise}
+              />
             )}
           </Card>
         </div>

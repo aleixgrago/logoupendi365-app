@@ -22,11 +22,11 @@ export default async function ParentDashboard() {
           if (!patient) return null;
           return (
             <Link key={patient.id} href={`/children/${patient.id}`}>
-              <Card className="transition-shadow hover:shadow-md">
+              <Card className="border-2 border-fun-100 transition-all hover:-translate-y-0.5 hover:border-fun-400 hover:shadow-md">
                 <p className="font-medium text-ink-900">
                   {patient.first_name} {patient.last_name}
                 </p>
-                <p className="mt-1 text-sm text-ink-400">
+                <p className="mt-1 text-sm text-fun-600">
                   Veure objectius i exercicis →
                 </p>
               </Card>

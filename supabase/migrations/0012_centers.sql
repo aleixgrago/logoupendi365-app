@@ -11,6 +11,10 @@ create table centers (
 
 alter table centers enable row level security;
 
+-- IMPORTANT: aquesta columna s'ha d'afegir ABANS de crear cap policy que
+-- la faci servir (com la de sota, que consulta profiles.center_id).
+alter table profiles add column center_id uuid references centers(id);
+
 -- Els membres del propi centre poden veure'n les dades bàsiques (nom,
 -- codi d'invitació). Cap altre centre no hi té accés.
 create policy "Els membres veuen el seu propi centre"
@@ -18,8 +22,6 @@ create policy "Els membres veuen el seu propi centre"
   using (
     id = (select center_id from profiles where id = auth.uid())
   );
-
-alter table profiles add column center_id uuid references centers(id);
 
 -- El pacient queda vinculat al centre en el moment de crear-lo (l'app ho
 -- omple automàticament amb el centre del terapeuta que el dona d'alta).

@@ -3,6 +3,7 @@ import { createExercise } from "../actions";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { StepsEditor } from "@/components/exercises/steps-editor";
 
 export default async function NewExercisePage() {
   const { supabase } = await requireRole("therapist");
@@ -114,6 +115,25 @@ export default async function NewExercisePage() {
               <option value="es">Castellà</option>
             </select>
           </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-ink-700">
+              Material necessari
+            </label>
+            <Input
+              name="materials"
+              placeholder="p. ex. Un mirall, targetes de paraules"
+            />
+          </div>
+
+          <StepsEditor />
+
+          <p className="text-xs text-ink-400">
+            Els passos són el que veurà el pare/tutor per fer l&apos;exercici
+            sol a casa, sense el logopeda present — com més concret i clar,
+            millor. El camp &quot;exemple / com saber si ho fa bé&quot; de
+            cada pas és opcional, però molt recomanable.
+          </p>
 
           <Button type="submit" className="w-full">
             Crear exercici

@@ -19,6 +19,19 @@ export async function createExercise(formData: FormData) {
     String(formData.get("disorder_category_id") ?? "") || null;
   const min_age = formData.get("min_age") ? Number(formData.get("min_age")) : null;
   const max_age = formData.get("max_age") ? Number(formData.get("max_age")) : null;
+  const materials = String(formData.get("materials") ?? "").trim() || null;
+
+  // L'editor de passos envia dues llistes paral·leles (una entrada per
+  // pas): step_instruction[] i step_tip[]. Es descarten els passos amb
+  // instruction buida (files afegides i no emplenades).
+  const stepInstructions = formData.getAll("step_instruction").map(String);
+  const stepTips = formData.getAll("step_tip").map(String);
+  const steps = stepInstructions
+    .map((instruction, i) => ({
+      instruction: instruction.trim(),
+      tip: (stepTips[i] ?? "").trim(),
+    }))
+    .filter((s) => s.instruction.length > 0);
 
   if (!title) {
     throw new Error("El títol és obligatori.");
@@ -39,6 +52,8 @@ export async function createExercise(formData: FormData) {
     disorder_category_id,
     min_age,
     max_age,
+    materials,
+    steps: steps.length > 0 ? steps : null,
   });
 
   if (error) {

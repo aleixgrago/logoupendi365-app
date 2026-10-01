@@ -197,6 +197,35 @@ export default async function ExercisesLibraryPage({
                     </span>
                   )}
                 </div>
+                {(ex.materials || (ex.steps && ex.steps.length > 0)) && (
+                  <details className="mt-3 text-sm">
+                    <summary className="cursor-pointer text-brand-600">
+                      Materials i passos
+                    </summary>
+                    <div className="mt-2 space-y-2 border-l-2 border-ink-100 pl-3">
+                      {ex.materials && (
+                        <p className="text-ink-700">
+                          <span className="font-medium">Material: </span>
+                          {ex.materials}
+                        </p>
+                      )}
+                      {ex.steps && ex.steps.length > 0 && (
+                        <ol className="list-decimal space-y-1 pl-4 text-ink-700">
+                          {ex.steps.map((s: { instruction: string; tip: string }, i: number) => (
+                            <li key={i}>
+                              {s.instruction}
+                              {s.tip && (
+                                <span className="block text-xs italic text-ink-400">
+                                  {s.tip}
+                                </span>
+                              )}
+                            </li>
+                          ))}
+                        </ol>
+                      )}
+                    </div>
+                  </details>
+                )}
               </Card>
             ))}
           </div>

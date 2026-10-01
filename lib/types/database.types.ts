@@ -116,6 +116,8 @@ export interface Database {
           min_age: number | null;
           max_age: number | null;
           difficulty: "easy" | "medium" | "hard" | null;
+          materials: string | null;
+          steps: { instruction: string; tip: string }[] | null;
           created_at: string;
         };
         Insert: {
@@ -132,6 +134,8 @@ export interface Database {
           min_age?: number | null;
           max_age?: number | null;
           difficulty?: "easy" | "medium" | "hard" | null;
+          materials?: string | null;
+          steps?: { instruction: string; tip: string }[] | null;
         };
         Update: Partial<Database["public"]["Tables"]["exercises"]["Insert"]>;
         Relationships: [];

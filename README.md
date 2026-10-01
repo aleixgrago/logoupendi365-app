@@ -29,6 +29,8 @@ pujar a Supabase Pro + Vercel Pro, aquesta restricció desapareix.
    - `supabase/migrations/0011_center_role.sql`
    - `supabase/migrations/0012_centers.sql`
    - `supabase/migrations/0013_center_signup_trigger.sql`
+   - `supabase/migrations/0014_exercise_steps.sql`
+   - `supabase/migrations/0015_exercise_steps_content.sql` (fitxer llarg, contingut dels 66 exercicis)
 3. Copia `.env.example` a `.env.local` i emplena `NEXT_PUBLIC_SUPABASE_URL` i
    `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Project Settings → API).
 4. Instal·la dependències i arrenca:
@@ -220,6 +222,40 @@ intacte per als qui no en necessiten cap:
 si calen): l'admin encara no pot reassignar pacients entre logopedes, ni
 veure'n el detall clínic (objectius, exercicis, documents) — només el
 llistat bàsic. Tampoc hi ha manera de donar de baixa un membre del centre.
+
+## Materials, passos guiats i assignació en cascada (nou en aquest increment)
+
+- Cada exercici pot portar ara **materials necessaris** (text lliure) i
+  **passos numerats** (`steps`, jsonb: `[{instruction, tip}]`), pensats
+  perquè un pare/tutor sense formació clínica pugui fer l'exercici SOL
+  amb el seu fill/a. El camp `tip` de cada pas és l'exemple concret o el
+  "com saber si ho estàs fent bé".
+- **Els 66 exercicis de la biblioteca de referència ja porten aquest
+  contingut** (migració `0015`). Únic avís especial: l'exercici de
+  resistència amb depressor lingual (motricitat orofacial) porta un avís
+  explícit de "no fer sense indicació prèvia del logopeda", perquè
+  implica un objecte dins la boca del nen/a — és l'única excepció
+  d'aquest tipus de tota la biblioteca.
+- **Important, i val la pena repetir-ho**: cap exercici arriba mai a un
+  pare sense que el seu logopeda l'hagi triat i assignat expressament per
+  a aquell pacient — el "filtre professional" ja existia abans d'aquesta
+  funcionalitat i segueix intacte. El que s'afegeix aquí és la guia
+  d'execució, no un salt del criteri clínic.
+- **Assignar exercici** (fitxa de pacient) ara és un formulari en cascada
+  (idioma → categoria → exercici, `components/exercises/assign-exercise-form.tsx`,
+  client component) en comptes d'un sol desplegable llarg.
+- **Editor de passos** (`components/exercises/steps-editor.tsx`) al
+  formulari de nou exercici: afegir/treure files d'instrucció + exemple.
+
+## Disseny més viu per a pares/nens (nou en aquest increment)
+
+S'ha afegit una segona paleta de colors (`coral`, `sunny`, `fun` a
+`tailwind.config.ts`), només aplicada a la part de pares — la part del
+logopeda es queda amb el to professional original a propòsit (són
+públics amb necessitats diferents). La vista de l'infant mostra ara els
+exercicis pendents en targetes grans amb els passos numerats ben
+visibles, i un botó de celebració ("🎉 Ja ho hem fet!") en comptes d'un
+botó neutre.
 
 ## Abans de sortir de la fase de beta (pujar a producció real)
 

@@ -257,6 +257,42 @@ exercicis pendents en targetes grans amb els passos numerats ben
 visibles, i un botó de celebració ("🎉 Ja ho hem fet!") en comptes d'un
 botó neutre.
 
+## Logout i tancament per inactivitat (nou en aquest increment)
+
+- **Botó "Tancar sessió"** a les 3 capçaleres (logopeda, pare, admin de
+  centre) — `components/shared/logout-button.tsx`.
+- **Tancament automàtic per inactivitat (30 minuts)** —
+  `components/shared/idle-timeout.tsx`, muntat a les 3 capçaleres. No és
+  només un redirect cosmètic: crida `supabase.auth.signOut()`, que revoca
+  el refresh token al servidor — la sessió queda realment tancada, no
+  només amagada al navegador.
+- En tancar-se per inactivitat, `/login` mostra un avís clar ("La sessió
+  s'ha tancat per inactivitat") perquè l'usuari no es pensi que és un
+  error de l'aplicació.
+- El temps (30 min) està fixat a `TIMEOUT_MS` dins de `idle-timeout.tsx`
+  — si mai cal canviar-lo, és l'única constant a tocar.
+
+## Evitar que Supabase pausi el projecte (nou en aquest increment)
+
+- **Cron diari a Vercel** (`vercel.json`, pla Hobby ja l'inclou gratis:
+  fins a un cop al dia per projecte) que crida
+  `/api/cron/keep-alive` — una consulta mínima de lectura a
+  `disorder_categories` (taula oberta a tothom) perquè Supabase vegi
+  activitat real i no pausi el projecte als 7 dies.
+- **Cal afegir la variable d'entorn `CRON_SECRET`** a Vercel (Settings →
+  Environment Variables, com les altres, com a "Config" ja que no porta
+  el prefix `NEXT_PUBLIC_`... en aquest cas concret SÍ s'ha de marcar com
+  a **Secret**, perquè no s'ha d'exposar mai al navegador). Genera un
+  valor aleatori (p. ex. `openssl rand -hex 32` en un terminal) i
+  enganxa'l tant a Vercel com, si vols provar-ho en local, al teu
+  `.env.local`.
+- Vercel afegeix automàticament la capçalera `Authorization: Bearer
+  <CRON_SECRET>` quan crida aquesta ruta — és així com la ruta distingeix
+  una trucada legítima del cron d'una trucada de qualsevol altra persona
+  des de fora.
+- Pots comprovar que funciona a Vercel → el teu projecte → pestanya
+  "Cron Jobs", on es veu l'historial d'execucions i si han anat bé.
+
 ## Abans de sortir de la fase de beta (pujar a producció real)
 
 - Supabase Pro + Vercel Pro (~45$/mes, ja discutit).

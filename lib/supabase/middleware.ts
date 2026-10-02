@@ -47,7 +47,12 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/ca/") ||
     pathname.startsWith("/es/") ||
     pathname === "/robots.txt" ||
-    pathname === "/sitemap.xml";
+    pathname === "/sitemap.xml" ||
+    // Les rutes d'API gestionen la seva pròpia autorització interna (com
+    // ja fa /api/documents/[id]/download): un redirect HTML a /login no
+    // té sentit per a una crida d'API (ni per al cron de Vercel, que no
+    // porta cap cookie de sessió).
+    pathname.startsWith("/api/");
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();

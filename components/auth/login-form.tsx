@@ -14,9 +14,11 @@ import type { Locale } from "@/lib/i18n/config";
 export function LoginForm({
   dict,
   locale,
+  timedOut = false,
 }: {
   dict: Dictionary;
   locale: Locale;
+  timedOut?: boolean;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -52,6 +54,13 @@ export function LoginForm({
         <div className="mb-4 flex justify-end">
           <LocaleSwitcher current={locale} />
         </div>
+
+        {timedOut && (
+          <p className="mb-4 rounded-xl bg-sunny-100 px-3 py-2 text-sm text-ink-700">
+            La sessió s&apos;ha tancat per inactivitat. Torna a iniciar
+            sessió.
+          </p>
+        )}
 
         <h1 className="mb-1 text-xl font-semibold text-ink-900">
           {dict.auth.login.title}

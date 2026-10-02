@@ -6,12 +6,14 @@ import { LoginForm } from "@/components/auth/login-form";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<{ lang?: string; timeout?: string }>;
 }) {
-  const { lang } = await searchParams;
+  const { lang, timeout } = await searchParams;
   const cookieLocale = await getLocale();
   const locale = lang && isValidLocale(lang) ? lang : cookieLocale;
   const dict = getDictionary(locale);
 
-  return <LoginForm dict={dict} locale={locale} />;
+  return (
+    <LoginForm dict={dict} locale={locale} timedOut={timeout === "1"} />
+  );
 }

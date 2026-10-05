@@ -95,9 +95,36 @@ export function AssignExerciseForm({
         </select>
       </div>
 
+      <div>
+        <p className="mb-1 text-xs font-medium text-ink-700">
+          Dies de la setmana (opcional — deixa-ho buit per a flexible)
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {DAYS.map((d) => (
+            <label
+              key={d.value}
+              className="flex items-center gap-1 rounded-lg border border-ink-100 px-2 py-1 text-xs text-ink-700"
+            >
+              <input type="checkbox" name="scheduled_days" value={d.value} />
+              {d.label}
+            </label>
+          ))}
+        </div>
+      </div>
+
       <Button type="submit" disabled={filteredExercises.length === 0}>
         Assignar
       </Button>
     </form>
   );
 }
+
+const DAYS = [
+  { value: "mon", label: "Dl" },
+  { value: "tue", label: "Dt" },
+  { value: "wed", label: "Dc" },
+  { value: "thu", label: "Dj" },
+  { value: "fri", label: "Dv" },
+  { value: "sat", label: "Ds" },
+  { value: "sun", label: "Dg" },
+];

@@ -3,5 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-ink-50 text-ink-900;
+  @apply text-ink-900;
+  background: linear-gradient(180deg, #f6eeff 0%, #fff6d9 50%, #fff1ec 100%);
+  background-attachment: fixed;
 }

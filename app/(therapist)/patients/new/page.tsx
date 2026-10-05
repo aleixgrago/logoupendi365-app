@@ -61,6 +61,26 @@ export default async function NewPatientPage() {
             </p>
           </div>
 
+          <div>
+            <label className="mb-1 block text-sm font-medium text-ink-700">
+              Motiu de consulta (opcional)
+            </label>
+            <Input
+              name="referral_reason"
+              placeholder="p. ex. Dificultat per pronunciar la R"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-ink-700">
+              Antecedents rellevants (opcional)
+            </label>
+            <Input
+              name="relevant_background"
+              placeholder="p. ex. Prematur, família bilingüe"
+            />
+          </div>
+
           <Button type="submit" className="w-full">
             Crear pacient
           </Button>

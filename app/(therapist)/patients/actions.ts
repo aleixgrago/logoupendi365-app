@@ -13,6 +13,10 @@ export async function createPatient(formData: FormData) {
   const preferred_language =
     (String(formData.get("preferred_language") ?? "") as "ca" | "es" | "") ||
     null;
+  const referral_reason =
+    String(formData.get("referral_reason") ?? "").trim() || null;
+  const relevant_background =
+    String(formData.get("relevant_background") ?? "").trim() || null;
 
   if (!first_name || !last_name || !birth_date) {
     throw new Error("Falten camps obligatoris.");
@@ -31,6 +35,8 @@ export async function createPatient(formData: FormData) {
       birth_date,
       diagnosis,
       preferred_language,
+      referral_reason,
+      relevant_background,
     })
     .select("id")
     .single();

@@ -10,6 +10,15 @@ const DIFFICULTY_LABELS: Record<string, string> = {
   hard: "Difícil",
 };
 
+// Paleta cíclica per donar un color diferent a cada categoria — purament
+// visual, no té relació amb cap dada clínica.
+const GROUP_STYLES = [
+  { dot: "bg-fun-500", border: "border-fun-200", heading: "text-fun-600" },
+  { dot: "bg-coral-500", border: "border-coral-200", heading: "text-coral-600" },
+  { dot: "bg-progress-400", border: "border-progress-100", heading: "text-progress-600" },
+  { dot: "bg-sunny-500", border: "border-sunny-400", heading: "text-ink-700" },
+];
+
 export default async function ExercisesLibraryPage({
   searchParams,
 }: {
@@ -151,9 +160,12 @@ export default async function ExercisesLibraryPage({
         </form>
       </Card>
 
-      {[...grouped.entries()].map(([key, group]) => (
+      {[...grouped.entries()].map(([key, group], groupIndex) => {
+        const style = GROUP_STYLES[groupIndex % GROUP_STYLES.length];
+        return (
         <div key={key} className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold text-ink-700">
+          <h2 className={`mb-3 flex items-center gap-2 text-sm font-semibold ${style.heading}`}>
+            <span className={`h-2.5 w-2.5 rounded-full ${style.dot}`} />
             {group.label}{" "}
             <span className="font-normal text-ink-400">
               ({group.items!.length})
@@ -161,7 +173,7 @@ export default async function ExercisesLibraryPage({
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {group.items!.map((ex: any) => (
-              <Card key={ex.id}>
+              <Card key={ex.id} className={style.border}>
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-medium text-ink-900">{ex.title}</h3>
                   <div className="flex shrink-0 gap-1">
@@ -230,7 +242,8 @@ export default async function ExercisesLibraryPage({
             ))}
           </div>
         </div>
-      ))}
+        );
+      })}
 
       {(exercises ?? []).length === 0 && (
         <p className="text-sm text-ink-400">

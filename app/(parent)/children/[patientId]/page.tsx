@@ -3,8 +3,11 @@ import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth/guards";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { completeAssignment } from "./actions";
+import { completeAssignment, undoAssignment } from "./actions";
 import { localeNames } from "@/lib/i18n/config";
+import { CompleteWithFeedbackForm } from "@/components/exercises/complete-with-feedback-form";
+
+const WEEKDAY_CODES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
 export default async function ChildDetailPage({
   params,
@@ -18,8 +21,6 @@ export default async function ChildDetailPage({
   const { lang } = await searchParams;
   const langFilter = lang === "ca" || lang === "es" ? lang : null;
 
-  // RLS garanteix que aquesta select només retorna resultat si `profile.id`
-  // és realment un guardian d'aquest patientId (taula patient_guardians).
   const { data: patient } = await supabase
     .from("patients")
     .select("id, first_name, last_name")
@@ -49,9 +50,78 @@ export default async function ChildDetailPage({
   const { data: assignments } = await assignmentsQuery;
 
   const boundComplete = completeAssignment.bind(null, patientId);
+  const boundUndo = undoAssignment.bind(null, patientId);
 
-  const pending = (assignments ?? []).filter((a) => a.status !== "completed");
+  const allPending = (assignments ?? []).filter((a) => a.status !== "completed");
   const completed = (assignments ?? []).filter((a) => a.status === "completed");
+
+  // Calendari MVP: sense scheduled_days = sempre "avui". Amb scheduled_days
+  // = "avui" només si el dia de la setmana actual hi és inclòs.
+  const todayCode = WEEKDAY_CODES[new Date().getDay()];
+  const today = allPending.filter(
+    (a) => !a.scheduled_days || (a.scheduled_days as string[]).includes(todayCode)
+  );
+  const laterThisWeek = allPending.filter(
+    (a) => a.scheduled_days && !(a.scheduled_days as string[]).includes(todayCode)
+  );
+
+  function ExerciseCard({ a }: { a: (typeof allPending)[number] }) {
+    const ex = a.exercises;
+    const steps = (ex?.steps ?? []) as { instruction: string; tip: string }[] | null;
+    return (
+      <Card className="border-2 border-coral-100 bg-gradient-to-br from-white to-coral-50">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-base font-semibold text-ink-900">{ex?.title}</p>
+              {ex?.language && (
+                <span className="rounded-full bg-ink-100 px-2 py-0.5 text-xs text-ink-700">
+                  {localeNames[ex.language as "ca" | "es"]}
+                </span>
+              )}
+            </div>
+            {ex?.description && (
+              <p className="mt-1 text-sm text-ink-700">{ex.description}</p>
+            )}
+            {ex?.estimated_minutes && (
+              <p className="mt-1 text-xs text-ink-400">
+                ⏱️ Uns {ex.estimated_minutes} minuts
+              </p>
+            )}
+          </div>
+        </div>
+
+        {ex?.materials && (
+          <p className="mt-3 rounded-xl bg-sunny-100 px-3 py-2 text-sm text-ink-700">
+            <span className="font-semibold">🧰 Et caldrà: </span>
+            {ex.materials}
+          </p>
+        )}
+
+        {steps && steps.length > 0 && (
+          <ol className="mt-3 space-y-3">
+            {steps.map((s, i) => (
+              <li key={i} className="flex gap-3">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-fun-500 text-xs font-bold text-white">
+                  {i + 1}
+                </span>
+                <div>
+                  <p className="text-sm text-ink-900">{s.instruction}</p>
+                  {s.tip && (
+                    <p className="text-xs italic text-ink-400">💡 {s.tip}</p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+
+        <div className="mt-4">
+          <CompleteWithFeedbackForm assignmentId={a.id} action={boundComplete} />
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <div>
@@ -86,9 +156,7 @@ export default async function ChildDetailPage({
         </Link>
       </div>
 
-      <h2 className="mb-3 text-sm font-medium text-ink-700">
-        Objectius actius
-      </h2>
+      <h2 className="mb-3 text-sm font-medium text-ink-700">Objectius actius</h2>
       <div className="mb-8 space-y-3">
         {(goals ?? []).map((g) => (
           <Card key={g.id} className="border-fun-100">
@@ -118,93 +186,34 @@ export default async function ChildDetailPage({
         )}
       </div>
 
-      <h2 className="mb-3 text-sm font-medium text-ink-700">
-        Avui toca fer 🎯
-      </h2>
+      <h2 className="mb-3 text-sm font-medium text-ink-700">Avui toca fer 🎯</h2>
       <div className="mb-8 space-y-4">
-        {pending.map((a) => {
-          const ex = a.exercises;
-          const steps = (ex?.steps ?? []) as { instruction: string; tip: string }[] | null;
-          return (
-            <Card
-              key={a.id}
-              className="border-2 border-coral-100 bg-gradient-to-br from-white to-coral-50"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-base font-semibold text-ink-900">
-                      {ex?.title}
-                    </p>
-                    {ex?.language && (
-                      <span className="rounded-full bg-ink-100 px-2 py-0.5 text-xs text-ink-700">
-                        {localeNames[ex.language as "ca" | "es"]}
-                      </span>
-                    )}
-                  </div>
-                  {ex?.description && (
-                    <p className="mt-1 text-sm text-ink-700">{ex.description}</p>
-                  )}
-                  {ex?.estimated_minutes && (
-                    <p className="mt-1 text-xs text-ink-400">
-                      ⏱️ Uns {ex.estimated_minutes} minuts
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {ex?.materials && (
-                <p className="mt-3 rounded-xl bg-sunny-100 px-3 py-2 text-sm text-ink-700">
-                  <span className="font-semibold">🧰 Et caldrà: </span>
-                  {ex.materials}
-                </p>
-              )}
-
-              {steps && steps.length > 0 && (
-                <ol className="mt-3 space-y-3">
-                  {steps.map((s, i) => (
-                    <li key={i} className="flex gap-3">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-fun-500 text-xs font-bold text-white">
-                        {i + 1}
-                      </span>
-                      <div>
-                        <p className="text-sm text-ink-900">{s.instruction}</p>
-                        {s.tip && (
-                          <p className="text-xs italic text-ink-400">
-                            💡 {s.tip}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              )}
-
-              <form action={boundComplete} className="mt-4">
-                <input type="hidden" name="assignment_id" value={a.id} />
-                <Button
-                  type="submit"
-                  className="w-full bg-coral-500 hover:bg-coral-600"
-                >
-                  🎉 Ja ho hem fet!
-                </Button>
-              </form>
-            </Card>
-          );
-        })}
-        {pending.length === 0 && (
+        {today.map((a) => (
+          <ExerciseCard key={a.id} a={a} />
+        ))}
+        {today.length === 0 && (
           <p className="text-sm text-ink-400">
-            No queda cap exercici pendent{langFilter ? " en aquest idioma" : ""}.
-            Molt bona feina! 🎉
+            Res programat per avui{langFilter ? " en aquest idioma" : ""}. 🎉
           </p>
         )}
       </div>
 
-      {completed.length > 0 && (
+      {laterThisWeek.length > 0 && (
         <>
           <h2 className="mb-3 text-sm font-medium text-ink-700">
-            Ja completats ✓
+            Més tard aquesta setmana 📅
           </h2>
+          <div className="mb-8 space-y-4">
+            {laterThisWeek.map((a) => (
+              <ExerciseCard key={a.id} a={a} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {completed.length > 0 && (
+        <>
+          <h2 className="mb-3 text-sm font-medium text-ink-700">Ja completats ✓</h2>
           <div className="space-y-2">
             {completed.map((a) => (
               <Card
@@ -214,9 +223,20 @@ export default async function ChildDetailPage({
                 <p className="text-sm font-medium text-ink-900">
                   {a.exercises?.title}
                 </p>
-                <span className="rounded-full bg-progress-100 px-3 py-1 text-xs font-medium text-progress-600">
-                  ✓ Fet
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-progress-100 px-3 py-1 text-xs font-medium text-progress-600">
+                    ✓ Fet
+                  </span>
+                  <form action={boundUndo}>
+                    <input type="hidden" name="assignment_id" value={a.id} />
+                    <button
+                      type="submit"
+                      className="text-xs text-ink-400 underline hover:text-ink-700"
+                    >
+                      Desfer
+                    </button>
+                  </form>
+                </div>
               </Card>
             ))}
           </div>

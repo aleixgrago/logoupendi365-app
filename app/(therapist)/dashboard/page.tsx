@@ -55,21 +55,27 @@ export default async function TherapistDashboard() {
       </h1>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card>
-          <p className="text-sm text-ink-400">{dict.dashboard.activePatients}</p>
-          <p className="mt-1 text-2xl font-semibold text-ink-900">
+        <Card className="border-fun-200 bg-gradient-to-br from-fun-50 to-white">
+          <p className="text-sm text-ink-700">{dict.dashboard.activePatients}</p>
+          <p className="mt-1 text-3xl font-bold text-fun-600">
             {activePatients ?? 0}
           </p>
         </Card>
-        <Card>
-          <p className="text-sm text-ink-400">{dict.dashboard.assignmentsWeek}</p>
-          <p className="mt-1 text-2xl font-semibold text-ink-900">
+        <Card className="border-progress-100 bg-gradient-to-br from-progress-100/60 to-white">
+          <p className="text-sm text-ink-700">{dict.dashboard.assignmentsWeek}</p>
+          <p className="mt-1 text-3xl font-bold text-progress-600">
             {assignmentsThisWeek ?? 0}
           </p>
         </Card>
-        <Card className={staleCount > 0 ? "border-amber-300 bg-amber-50" : ""}>
-          <p className="text-sm text-ink-400">{dict.dashboard.staleCount}</p>
-          <p className="mt-1 text-2xl font-semibold text-ink-900">
+        <Card
+          className={
+            staleCount > 0
+              ? "border-coral-400 bg-gradient-to-br from-coral-100 to-white"
+              : "border-sunny-400 bg-gradient-to-br from-sunny-100 to-white"
+          }
+        >
+          <p className="text-sm text-ink-700">{dict.dashboard.staleCount}</p>
+          <p className="mt-1 text-3xl font-bold text-coral-600">
             {staleCount}
           </p>
         </Card>

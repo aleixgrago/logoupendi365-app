@@ -3,11 +3,26 @@
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth/guards";
 
-export async function linkGuardian(patientId: string, formData: FormData) {
+export type LinkGuardianState = { error: string | null };
+
+/**
+ * Pensada per fer-se servir amb useActionState (veure
+ * components/patients/link-guardian-form.tsx): en comptes de llançar una
+ * excepció (que Next.js converteix en un "Application error" de pàgina
+ * sencera), retorna { error } perquè el component la mostri com un avís
+ * normal sota el formulari. Errors esperables (email no trobat, camp
+ * buit) no són "errors del sistema" — són resultats normals d'un
+ * formulari, i s'han de tractar així.
+ */
+export async function linkGuardian(
+  patientId: string,
+  _prevState: LinkGuardianState,
+  formData: FormData
+): Promise<LinkGuardianState> {
   const { supabase } = await requireRole("therapist");
 
   const email = String(formData.get("email") ?? "").trim();
-  if (!email) throw new Error("Cal indicar un email.");
+  if (!email) return { error: "Cal indicar un email." };
 
   // Mateix workaround que a mark_assignment_completed (veure comentari allà).
   const { error } = await (supabase.rpc as any)("link_guardian_by_email", {
@@ -15,9 +30,10 @@ export async function linkGuardian(patientId: string, formData: FormData) {
     p_email: email,
   });
 
-  if (error) throw new Error(error.message);
+  if (error) return { error: error.message };
 
   revalidatePath(`/patients/${patientId}`);
+  return { error: null };
 }
 
 export async function createGoal(patientId: string, formData: FormData) {
@@ -58,6 +74,10 @@ export async function assignExercise(patientId: string, formData: FormData) {
 
   const exercise_id = String(formData.get("exercise_id") ?? "");
   const goal_id = String(formData.get("goal_id") ?? "") || null;
+  // Dies de la setmana marcats (checkboxes amb name="scheduled_days",
+  // mateix name repetit per cada dia marcat). Array buit → null (= flexible).
+  const scheduledDaysRaw = formData.getAll("scheduled_days").map(String);
+  const scheduled_days = scheduledDaysRaw.length > 0 ? scheduledDaysRaw : null;
 
   if (!exercise_id) {
     throw new Error("Cal seleccionar un exercici.");
@@ -67,6 +87,7 @@ export async function assignExercise(patientId: string, formData: FormData) {
     patient_id: patientId,
     exercise_id,
     goal_id,
+    scheduled_days,
   });
 
   if (error) throw new Error(error.message);

@@ -10,13 +10,17 @@ import {
   uploadDocument,
   linkGuardian,
 } from "./actions";
+import { createClinicalSession } from "./clinical-sessions-actions";
 import { localeNames } from "@/lib/i18n/config";
 import { AssignExerciseForm } from "@/components/exercises/assign-exercise-form";
+import { LinkGuardianForm } from "@/components/patients/link-guardian-form";
+import { ClinicalSessionsSection } from "@/components/patients/clinical-sessions-section";
 
 const TABS = [
   { key: "summary", label: "Resum" },
   { key: "goals", label: "Objectius" },
   { key: "exercises", label: "Exercicis" },
+  { key: "sessions", label: "Sessions" },
   { key: "documents", label: "Documents" },
   { key: "history", label: "Historial" },
 ] as const;
@@ -61,6 +65,20 @@ export default async function PatientDetailPage({
     goalsQuery = goalsQuery.eq("language", langFilter);
   }
   const { data: goals } = await goalsQuery;
+
+  const { data: clinicalSessions } =
+    tab === "sessions"
+      ? await supabase
+          .from("clinical_sessions")
+          .select("*")
+          .eq("patient_id", patientId)
+          .order("session_date", { ascending: false })
+      : { data: null };
+
+  const boundCreateClinicalSession = createClinicalSession.bind(
+    null,
+    patientId
+  );
 
   const { data: assignments } =
     tab === "exercises"
@@ -192,18 +210,7 @@ export default async function PatientDetailPage({
               <li className="text-ink-400">Encara no hi ha cap tutor vinculat.</li>
             )}
           </ul>
-          <form action={boundLinkGuardian} className="flex gap-2">
-            <Input
-              type="email"
-              name="email"
-              required
-              placeholder="email del pare/tutor (ja registrat)"
-              className="max-w-xs"
-            />
-            <Button type="submit" variant="secondary">
-              Vincular
-            </Button>
-          </form>
+          <LinkGuardianForm action={boundLinkGuardian} />
         </Card>
       )}
 
@@ -442,6 +449,14 @@ export default async function PatientDetailPage({
             <p className="text-sm text-ink-400">Sense esdeveniments encara.</p>
           )}
         </div>
+      )}
+
+      {tab === "sessions" && (
+        <ClinicalSessionsSection
+          sessions={clinicalSessions ?? []}
+          goals={(goals ?? []).map((g) => ({ id: g.id, title: g.title }))}
+          action={boundCreateClinicalSession}
+        />
       )}
     </div>
   );

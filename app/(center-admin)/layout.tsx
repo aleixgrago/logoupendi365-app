@@ -17,10 +17,10 @@ export default async function CenterAdminLayout({
   return (
     <div className="min-h-screen">
       <IdleTimeout />
-      <header className="border-b border-ink-100 bg-white">
+      <header className="border-b-2 border-fun-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
           <span className="font-semibold text-ink-900">
-            {dict.common.appName}
+            {dict.common.appName} <span aria-hidden="true">✨</span>
           </span>
           <div className="flex items-center gap-4 text-sm text-ink-700">
             <span className="font-medium">{dict.nav.center}</span>

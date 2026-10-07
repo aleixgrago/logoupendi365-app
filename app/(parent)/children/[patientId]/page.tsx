@@ -49,6 +49,12 @@ export default async function ChildDetailPage({
   if (langFilter) assignmentsQuery = assignmentsQuery.eq("exercises.language", langFilter);
   const { data: assignments } = await assignmentsQuery;
 
+  const { data: sessionSummaries } = await supabase
+    .from("patient_session_summaries")
+    .select("session_date, family_summary")
+    .eq("patient_id", patientId)
+    .order("session_date", { ascending: false });
+
   const boundComplete = completeAssignment.bind(null, patientId);
   const boundUndo = undoAssignment.bind(null, patientId);
 
@@ -185,6 +191,24 @@ export default async function ChildDetailPage({
           </p>
         )}
       </div>
+
+      {(sessionSummaries ?? []).length > 0 && (
+        <>
+          <h2 className="mb-3 text-sm font-medium text-ink-700">
+            Resum de les sessions 📝
+          </h2>
+          <div className="mb-8 space-y-3">
+            {(sessionSummaries ?? []).map((s, i) => (
+              <Card key={i} className="border-sunny-400 bg-sunny-100/40">
+                <p className="text-xs font-medium text-ink-400">
+                  {new Date(s.session_date).toLocaleDateString("ca")}
+                </p>
+                <p className="mt-1 text-sm text-ink-900">{s.family_summary}</p>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
 
       <h2 className="mb-3 text-sm font-medium text-ink-700">Avui toca fer 🎯</h2>
       <div className="mb-8 space-y-4">

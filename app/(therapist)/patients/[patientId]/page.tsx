@@ -10,7 +10,11 @@ import {
   uploadDocument,
   linkGuardian,
 } from "./actions";
-import { createClinicalSession } from "./clinical-sessions-actions";
+import {
+  createClinicalSession,
+  approveFamilySummary,
+  regenerateSessionSummaries,
+} from "./clinical-sessions-actions";
 import { localeNames } from "@/lib/i18n/config";
 import { AssignExerciseForm } from "@/components/exercises/assign-exercise-form";
 import { LinkGuardianForm } from "@/components/patients/link-guardian-form";
@@ -75,7 +79,33 @@ export default async function PatientDetailPage({
           .order("session_date", { ascending: false })
       : { data: null };
 
+  const { data: assignedExercises } =
+    tab === "sessions"
+      ? await supabase
+          .from("exercise_assignments")
+          .select("exercise_id, exercises(id, title)")
+          .eq("patient_id", patientId)
+      : { data: null };
+
+  // Deduplicar (un mateix exercici pot tenir diverses assignacions).
+  const exerciseOptionsForSession = Array.from(
+    new Map(
+      (assignedExercises ?? [])
+        .map((a: any) => a.exercises)
+        .filter(Boolean)
+        .map((ex: any) => [ex.id, ex])
+    ).values()
+  ) as { id: string; title: string }[];
+
   const boundCreateClinicalSession = createClinicalSession.bind(
+    null,
+    patientId
+  );
+  const boundApproveFamilySummary = approveFamilySummary.bind(
+    null,
+    patientId
+  );
+  const boundRegenerateSummaries = regenerateSessionSummaries.bind(
     null,
     patientId
   );
@@ -153,9 +183,14 @@ export default async function PatientDetailPage({
           ← Pacients
         </Link>
       </div>
-      <h1 className="mb-6 text-xl font-semibold text-ink-900">
-        {patient.first_name} {patient.last_name}
-      </h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-ink-900">
+          {patient.first_name} {patient.last_name}
+        </h1>
+        <Link href={`/patients/${patientId}?tab=sessions#nova-sessio`}>
+          <Button>Finalitzar sessió</Button>
+        </Link>
+      </div>
 
       <div className="mb-6 flex gap-1 border-b border-ink-100">
         {TABS.map((t) => (
@@ -455,7 +490,10 @@ export default async function PatientDetailPage({
         <ClinicalSessionsSection
           sessions={clinicalSessions ?? []}
           goals={(goals ?? []).map((g) => ({ id: g.id, title: g.title }))}
+          exercises={exerciseOptionsForSession}
           action={boundCreateClinicalSession}
+          approveAction={boundApproveFamilySummary}
+          regenerateAction={boundRegenerateSummaries}
         />
       )}
     </div>

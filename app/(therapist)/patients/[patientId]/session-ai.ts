@@ -57,11 +57,14 @@ function buildUserPrompt(input: SessionAiInput): string {
   return lines.join("\n");
 }
 
+<<<<<<< HEAD
 // "gemini-flash-latest" és un àlies estable (Google el va reassignant al
 // model Flash vigent) — més segur a mitjà termini que fixar una versió
 // datada concreta, que Google acaba retirant.
 const GEMINI_MODEL = "gemini-flash-latest";
 
+=======
+>>>>>>> 4609d519bc64949bfcbff2304a4b26a088a3d971
 /**
  * Retorna null si no hi ha clau configurada o si la crida falla — mai
  * llança excepció. Qui la crida ha de deixar `family_summary_status` a
@@ -70,6 +73,7 @@ const GEMINI_MODEL = "gemini-flash-latest";
 export async function generateSessionSummaries(
   input: SessionAiInput
 ): Promise<{ family_summary: string; clinical_summary: string } | null> {
+<<<<<<< HEAD
   if (!process.env.GEMINI_API_KEY) return null;
 
   try {
@@ -85,11 +89,35 @@ export async function generateSessionSummaries(
         }),
       }
     );
+=======
+  if (!process.env.OPENAI_API_KEY) return null;
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: buildUserPrompt(input) },
+        ],
+      }),
+    });
+>>>>>>> 4609d519bc64949bfcbff2304a4b26a088a3d971
 
     if (!res.ok) return null;
 
     const data = await res.json();
+<<<<<<< HEAD
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+=======
+    const text = data.choices?.[0]?.message?.content;
+>>>>>>> 4609d519bc64949bfcbff2304a4b26a088a3d971
     if (!text) return null;
 
     const parsed = JSON.parse(text);

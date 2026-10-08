@@ -34,12 +34,17 @@ Recursió infinita entre policies de `patients` i `patient_guardians`
 a una altra taula amb RLS pròpia ha de passar per una funció `SECURITY
 DEFINER`, no una subquery directa.
 
-## Pendent (del document de Fase 1, si s'aprova la Fase 2)
-- `clinical_sessions`: afegir `goal_ids uuid[]`, `activities`,
-  `evolution`, `next_steps`.
-- `patients`: afegir `referral_reason`, `relevant_background`.
-- `exercise_assignments`: afegir `scheduled_days text[]`,
-  `ease_rating`, `motivation_rating`, `needed_help`, `outcome`,
-  `feedback_comment`.
-- Nova funció `undo_assignment_completion`, bessona de
-  `mark_assignment_completed`.
+## Assistència IA de Sessió (0021, completa)
+`clinical_sessions` amplia amb `exercise_ids`, `participation`,
+`evolution_rating`, `family_summary`, `clinical_summary`,
+`family_summary_status` (pending→draft→approved). Vista
+`patient_session_summaries` (NO security_invoker, bypassa RLS pel seu
+propietari) projecta només `patient_id`/`session_date`/`family_summary`
+als pares — `clinical_summary` mai surt d'aquesta taula. Generació IA a
+`app/(therapist)/patients/[patientId]/session-ai.ts` (Google Gemini,
+model `gemini-flash-latest`, pla gratuït — `GEMINI_API_KEY` com a secret
+a Vercel; al pla gratuït Google pot entrenar amb el contingut enviat,
+acceptable amb dades fictícies de beta, a revisar abans de pacients
+reals), cridada des de
+`createClinicalSession` (no bloquejant) i `regenerateSessionSummaries`
+(reintent manual si queda en `pending`).

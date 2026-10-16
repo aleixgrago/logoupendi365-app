@@ -3,6 +3,8 @@ import { requireRole } from "@/lib/auth/guards";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { localeNames } from "@/lib/i18n/config";
+import { deleteExercise } from "./actions";
+import { DeleteExerciseForm } from "@/components/exercises/delete-exercise-form";
 
 const DIFFICULTY_LABELS: Record<string, string> = {
   easy: "Fàcil",
@@ -237,6 +239,20 @@ export default async function ExercisesLibraryPage({
                       )}
                     </div>
                   </details>
+                )}
+                {ex.therapist_id === profile.id && (
+                  <div className="mt-3 flex items-start gap-4 border-t border-ink-100 pt-2">
+                    <Link
+                      href={`/exercises-library/${ex.id}/edit`}
+                      className="text-xs text-fun-600 hover:underline"
+                    >
+                      Editar
+                    </Link>
+                    <DeleteExerciseForm
+                      exerciseId={ex.id}
+                      action={deleteExercise}
+                    />
+                  </div>
                 )}
               </Card>
             ))}

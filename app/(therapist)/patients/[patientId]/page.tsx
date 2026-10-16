@@ -9,6 +9,7 @@ import {
   assignExercise,
   uploadDocument,
   linkGuardian,
+  updateGoal,
 } from "./actions";
 import {
   createClinicalSession,
@@ -18,6 +19,7 @@ import {
 import { localeNames } from "@/lib/i18n/config";
 import { AssignExerciseForm } from "@/components/exercises/assign-exercise-form";
 import { LinkGuardianForm } from "@/components/patients/link-guardian-form";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ClinicalSessionsSection } from "@/components/patients/clinical-sessions-section";
 
 const TABS = [
@@ -28,6 +30,10 @@ const TABS = [
   { key: "documents", label: "Documents" },
   { key: "history", label: "Historial" },
 ] as const;
+
+// Les Server Actions d'aquesta pàgina (generar el resum de sessió amb
+// Gemini) poden trigar; sense això Vercel les talla als 10 s per defecte.
+export const maxDuration = 60;
 
 export default async function PatientDetailPage({
   params,
@@ -166,6 +172,7 @@ export default async function PatientDetailPage({
   const boundAssignExercise = assignExercise.bind(null, patientId);
   const boundUploadDocument = uploadDocument.bind(null, patientId);
   const boundLinkGuardian = linkGuardian.bind(null, patientId);
+  const boundUpdateGoal = updateGoal.bind(null, patientId);
 
   const EVENT_LABELS: Record<string, string> = {
     patient_created: "Pacient donat d'alta",
@@ -174,6 +181,9 @@ export default async function PatientDetailPage({
     exercise_assigned: "Exercici assignat",
     document_uploaded: "Document pujat",
     exercise_completed_by_parent: "Exercici marcat com fet pel pare/tutor",
+    exercise_marked_pending_by_parent: "Exercici desfet pel pare/tutor",
+    goal_updated: "Objectiu actualitzat",
+    patient_updated: "Dades del pacient actualitzades",
   };
 
   return (
@@ -187,9 +197,14 @@ export default async function PatientDetailPage({
         <h1 className="text-xl font-semibold text-ink-900">
           {patient.first_name} {patient.last_name}
         </h1>
-        <Link href={`/patients/${patientId}?tab=sessions#nova-sessio`}>
-          <Button>Finalitzar sessió</Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href={`/patients/${patientId}/edit`}>
+            <Button variant="secondary">Editar</Button>
+          </Link>
+          <Link href={`/patients/${patientId}?tab=sessions#nova-sessio`}>
+            <Button>Finalitzar sessió</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="mb-6 flex gap-1 border-b border-ink-100">
@@ -224,6 +239,16 @@ export default async function PatientDetailPage({
             <div className="col-span-2">
               <dt className="text-ink-400">Diagnòstic</dt>
               <dd className="text-ink-900">{patient.diagnosis ?? "—"}</dd>
+            </div>
+            <div className="col-span-2">
+              <dt className="text-ink-400">Motiu de consulta</dt>
+              <dd className="text-ink-900">{patient.referral_reason ?? "—"}</dd>
+            </div>
+            <div className="col-span-2">
+              <dt className="text-ink-400">Antecedents rellevants</dt>
+              <dd className="text-ink-900">
+                {patient.relevant_background ?? "—"}
+              </dd>
             </div>
           </dl>
         </Card>
@@ -283,7 +308,11 @@ export default async function PatientDetailPage({
                     </span>
                   </div>
                   <span className="text-sm text-progress-600">
-                    {g.progress_pct}%
+                    {g.status === "achieved"
+                      ? "✓ Assolit"
+                      : g.status === "paused"
+                      ? `⏸ En pausa · ${g.progress_pct}%`
+                      : `${g.progress_pct}%`}
                   </span>
                 </div>
                 {g.description && (
@@ -295,6 +324,44 @@ export default async function PatientDetailPage({
                     style={{ width: `${g.progress_pct}%` }}
                   />
                 </div>
+                <details className="mt-3 text-sm">
+                  <summary className="cursor-pointer text-fun-600">
+                    Actualitzar progrés
+                  </summary>
+                  <form
+                    action={boundUpdateGoal}
+                    className="mt-2 flex flex-wrap items-end gap-2"
+                  >
+                    <input type="hidden" name="goal_id" value={g.id} />
+                    <label className="text-xs text-ink-700">
+                      Progrés (%)
+                      <input
+                        type="number"
+                        name="progress_pct"
+                        min={0}
+                        max={100}
+                        step={5}
+                        defaultValue={g.progress_pct}
+                        className="mt-1 block w-24 rounded-xl border border-ink-100 bg-white px-3 py-2 text-sm"
+                      />
+                    </label>
+                    <label className="text-xs text-ink-700">
+                      Estat
+                      <select
+                        name="status"
+                        defaultValue={g.status}
+                        className="mt-1 block rounded-xl border border-ink-100 bg-white px-3 py-2 text-sm"
+                      >
+                        <option value="active">Actiu</option>
+                        <option value="achieved">Assolit</option>
+                        <option value="paused">En pausa</option>
+                      </select>
+                    </label>
+                    <SubmitButton variant="secondary" pendingLabel="Desant...">
+                      Desar
+                    </SubmitButton>
+                  </form>
+                </details>
               </Card>
             ))}
             {(goals ?? []).length === 0 && (

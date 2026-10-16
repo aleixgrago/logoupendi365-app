@@ -35,7 +35,7 @@ export default async function ChildDetailPage({
     .from("goals")
     .select("*")
     .eq("patient_id", patientId)
-    .eq("status", "active");
+    .in("status", ["active", "achieved"]);
   if (langFilter) goalsQuery = goalsQuery.eq("language", langFilter);
   const { data: goals } = await goalsQuery;
 
@@ -162,7 +162,7 @@ export default async function ChildDetailPage({
         </Link>
       </div>
 
-      <h2 className="mb-3 text-sm font-medium text-ink-700">Objectius actius</h2>
+      <h2 className="mb-3 text-sm font-medium text-ink-700">Objectius</h2>
       <div className="mb-8 space-y-3">
         {(goals ?? []).map((g) => (
           <Card key={g.id} className="border-fun-100">
@@ -174,7 +174,7 @@ export default async function ChildDetailPage({
                 </span>
               </div>
               <span className="text-sm font-semibold text-progress-600">
-                {g.progress_pct}%
+                {g.status === "achieved" ? "🎉 Assolit!" : `${g.progress_pct}%`}
               </span>
             </div>
             <div className="mt-3 h-2.5 w-full rounded-full bg-ink-100">

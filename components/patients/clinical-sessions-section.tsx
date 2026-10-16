@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { RegenerateSummaryForm } from "@/components/patients/regenerate-summary-form";
+import type { RegenerateSummaryState } from "@/app/(therapist)/patients/[patientId]/clinical-sessions-actions";
 
 interface Goal {
   id: string;
@@ -51,7 +53,11 @@ export function ClinicalSessionsSection({
   exercises: ExerciseOption[];
   action: (formData: FormData) => void;
   approveAction: (sessionId: string) => void;
-  regenerateAction: (sessionId: string) => void;
+  regenerateAction: (
+    sessionId: string,
+    prevState: RegenerateSummaryState,
+    formData: FormData
+  ) => Promise<RegenerateSummaryState>;
 }) {
   return (
     <div className="space-y-6">
@@ -107,17 +113,15 @@ export function ClinicalSessionsSection({
               )}
               {s.family_summary_status === "draft" && (
                 <form action={approveAction.bind(null, s.id)} className="mt-2">
-                  <Button type="submit" variant="secondary">
+                  <SubmitButton variant="secondary" pendingLabel="Aprovant...">
                     Aprovar per a la família
-                  </Button>
+                  </SubmitButton>
                 </form>
               )}
               {s.family_summary_status === "pending" && (
-                <form action={regenerateAction.bind(null, s.id)} className="mt-2">
-                  <Button type="submit" variant="secondary">
-                    Generar resum ara
-                  </Button>
-                </form>
+                <RegenerateSummaryForm
+                  action={regenerateAction.bind(null, s.id)}
+                />
               )}
             </div>
           </Card>
@@ -229,9 +233,12 @@ export function ClinicalSessionsSection({
             className="w-full rounded-xl border border-ink-100 bg-white px-3 py-2 text-sm"
           />
 
-          <Button type="submit" className="w-full">
+          <SubmitButton
+            className="w-full"
+            pendingLabel="Desant sessió i generant resum… pot trigar una mica, no cal tornar a clicar"
+          >
             Finalitzar sessió
-          </Button>
+          </SubmitButton>
         </form>
       </Card>
     </div>

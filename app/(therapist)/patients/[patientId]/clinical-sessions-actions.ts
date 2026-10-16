@@ -97,26 +97,38 @@ export async function createClinicalSession(
   revalidatePath(`/patients/${patientId}`);
 }
 
+export type RegenerateSummaryState = { error: string | null };
+
 /**
  * Reintent manual quan la generació automàtica ha fallat (status es queda
- * 'pending'). Mateixa lògica que a createClinicalSession, aplicada a una
- * sessió ja existent.
+ * 'pending'). Pensada per a useActionState: retorna { error } en comptes
+ * de llançar excepció (una excepció petaria tota la pàgina).
+ *
+ * Només actua sobre sessions en 'pending': si un segon clic (o una pàgina
+ * desactualitzada) arriba quan el resum ja s'ha generat o aprovat, és un
+ * no-op — mai sobreescriu contingut ja revisat pel logopeda.
  */
 export async function regenerateSessionSummaries(
   patientId: string,
-  sessionId: string
-) {
+  sessionId: string,
+  _prevState: RegenerateSummaryState,
+  _formData: FormData
+): Promise<RegenerateSummaryState> {
   const { supabase } = await requireRole("therapist");
 
   const { data: session } = await supabase
     .from("clinical_sessions")
     .select(
-      "language, goal_ids, exercise_ids, participation, evolution_rating, activities, next_steps, notes"
+      "language, goal_ids, exercise_ids, participation, evolution_rating, activities, next_steps, notes, family_summary_status"
     )
     .eq("id", sessionId)
     .single();
 
-  if (!session) throw new Error("Sessió no trobada.");
+  if (!session) return { error: "Sessió no trobada." };
+  if (session.family_summary_status !== "pending") {
+    revalidatePath(`/patients/${patientId}`);
+    return { error: null };
+  }
 
   const goalIds: string[] = session.goal_ids ?? [];
   const exerciseIds: string[] = session.exercise_ids ?? [];
@@ -142,7 +154,10 @@ export async function regenerateSessionSummaries(
   });
 
   if (!summaries) {
-    throw new Error("No s'ha pogut generar el resum. Torna-ho a provar.");
+    return {
+      error:
+        "No s'ha pogut generar el resum ara mateix. Torna-ho a provar d'aquí uns instants.",
+    };
   }
 
   const { error } = await supabase
@@ -152,11 +167,13 @@ export async function regenerateSessionSummaries(
       clinical_summary: summaries.clinical_summary,
       family_summary_status: "draft",
     })
-    .eq("id", sessionId);
+    .eq("id", sessionId)
+    .eq("family_summary_status", "pending");
 
-  if (error) throw new Error(error.message);
+  if (error) return { error: error.message };
 
   revalidatePath(`/patients/${patientId}`);
+  return { error: null };
 }
 
 /**

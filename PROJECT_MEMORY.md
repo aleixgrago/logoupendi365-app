@@ -41,6 +41,16 @@ d'`@supabase/supabase-js` que no valia la pena perseguir — veure
 
 ## Pendent conegut (no repetir com a "descobriment nou")
 - Traducció i18n incompleta a biblioteca d'exercicis i fitxa de pacient.
-- Edició de pacients existents: no implementada (només alta+lectura).
 - `/center`: no permet reassignar pacients ni veure detall clínic.
 - Textos de Privacitat/Termes: placeholder, no legal real.
+
+## Fet recentment (no tornar-ho a proposar)
+- Objectius editables (progrés % + estat actiu/assolit/pausa, amb event a
+  `history_events`); edició de pacients (`/patients/[id]/edit`); editar i
+  esborrar exercicis propis (plantilles compartides mai editables; un
+  exercici assignat no es pot esborrar → error inline).
+- `components/ui/submit-button.tsx`: TOT formulari amb Server Action lenta
+  o que crea dades ha de fer-lo servir (bloqueja el doble clic). El reintent
+  del resum IA només actua sobre sessions en 'pending'.
+- `export const maxDuration = 60` a la fitxa de pacient: necessari perquè
+  les accions que criden Gemini no es tallin als 10 s.

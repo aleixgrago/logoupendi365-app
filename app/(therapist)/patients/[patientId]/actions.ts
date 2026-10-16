@@ -69,6 +69,42 @@ export async function createGoal(patientId: string, formData: FormData) {
   revalidatePath(`/patients/${patientId}`);
 }
 
+export async function updateGoal(patientId: string, formData: FormData) {
+  const { supabase, profile } = await requireRole("therapist");
+
+  const goalId = String(formData.get("goal_id") ?? "");
+  const status = String(formData.get("status") ?? "active");
+  let progress = Number(formData.get("progress_pct") ?? 0);
+
+  if (!goalId) throw new Error("Falta l'objectiu.");
+  if (!["active", "achieved", "paused"].includes(status)) {
+    throw new Error("Estat no vàlid.");
+  }
+
+  progress = Number.isNaN(progress)
+    ? 0
+    : Math.min(100, Math.max(0, Math.round(progress)));
+  // Un objectiu assolit sempre és al 100% — evita "assolit al 60%".
+  if (status === "achieved") progress = 100;
+
+  const { error } = await supabase
+    .from("goals")
+    .update({ progress_pct: progress, status })
+    .eq("id", goalId)
+    .eq("patient_id", patientId);
+
+  if (error) throw new Error(error.message);
+
+  await supabase.from("history_events").insert({
+    patient_id: patientId,
+    event_type: "goal_updated",
+    payload: { goal_id: goalId, progress_pct: progress, status },
+    created_by: profile.id,
+  });
+
+  revalidatePath(`/patients/${patientId}`);
+}
+
 export async function assignExercise(patientId: string, formData: FormData) {
   const { supabase, profile } = await requireRole("therapist");
 

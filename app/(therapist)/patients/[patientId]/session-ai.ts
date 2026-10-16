@@ -78,6 +78,10 @@ export async function generateSessionSummaries(
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        // Si Gemini no respon en 40 s, es talla i la sessió queda en
+        // 'pending' (reintentable) en comptes de deixar la pàgina penjada
+        // fins que Vercel mata la funció.
+        signal: AbortSignal.timeout(40_000),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents: [{ parts: [{ text: buildUserPrompt(input) }] }],
